@@ -192,20 +192,45 @@ def main(args):
         save_document_representations(model, test_X, test_labels, test_prior_covars, test_topic_covars, test_ids, options.output_dir, 'test', batch_size=options.batch_size)
 
 
-def load_word_counts(input_dir, input_prefix, vocab=None):
-    print("Loading data")
-    # laod the word counts and convert to a dense matrix
-    temp = fh.load_sparse(os.path.join(input_dir, input_prefix + '.npz')).todense()
-    X = np.array(temp, dtype='float32')
+#def load_word_counts(input_dir, input_prefix, vocab=None):
+#    print("Loading data")
+#    # laod the word counts and convert to a dense matrix
+#    temp = fh.load_sparse(os.path.join(input_dir, input_prefix + '.npz')).todense()
+#    X = np.array(temp, dtype='float32')
+#    # load the vocabulary
+#    if vocab is None:
+#        vocab = fh.read_json(os.path.join(input_dir, input_prefix + '.vocab.json'))
+#    n_items, vocab_size = X.shape
+#    assert vocab_size == len(vocab)
+#    print("Loaded %d documents with %d features" % (n_items, vocab_size))
+#
+#    ids = fh.read_json(os.path.join(input_dir, input_prefix + '.ids.json'))
+#
+#    # filter out empty documents and return a boolean selector for filtering labels and covariates
+#    row_selector = np.array(X.sum(axis=1) > 0, dtype=bool)
+#    print("Found %d non-empty documents" % np.sum(row_selector))
+#    X = X[row_selector, :]
+#    ids = [doc_id for i, doc_id in enumerate(ids) if row_selector[i]]
+#
+#    return X, vocab, row_selector, ids
+
+def load_word_counts(input_dir, input_prefix, vocab=None):    
+    df = pd.read_pickle(os.path.join(input_dir, input_prefix+'.pickle'))
+    no_index = df.drop(df.columns[0], axis = 1)#drop the index
+    X = no_index.values
+    vocab = no_index.columns
+    ids = df['index'].values
+#    print("Loading data")
+#    # laod the word counts and convert to a dense matrix
+#    temp = fh.load_sparse(os.path.join(input_dir, input_prefix + '.npz')).todense()
+#    X = np.array(temp, dtype='float32')
     # load the vocabulary
-    if vocab is None:
-        vocab = fh.read_json(os.path.join(input_dir, input_prefix + '.vocab.json'))
+    #if vocab is None:
+    #    vocab = fh.read_json(os.path.join(input_dir, input_prefix + '.vocab.json'))
     n_items, vocab_size = X.shape
     assert vocab_size == len(vocab)
     print("Loaded %d documents with %d features" % (n_items, vocab_size))
-
-    ids = fh.read_json(os.path.join(input_dir, input_prefix + '.ids.json'))
-
+    #ids = fh.read_json(os.path.join(input_dir, input_prefix + '.ids.json'))
     # filter out empty documents and return a boolean selector for filtering labels and covariates
     row_selector = np.array(X.sum(axis=1) > 0, dtype=bool)
     print("Found %d non-empty documents" % np.sum(row_selector))
@@ -213,6 +238,7 @@ def load_word_counts(input_dir, input_prefix, vocab=None):
     ids = [doc_id for i, doc_id in enumerate(ids) if row_selector[i]]
 
     return X, vocab, row_selector, ids
+
 
 
 def load_labels(input_dir, input_prefix, row_selector, options):
@@ -688,7 +714,7 @@ def save_weights(output_dir, beta, bg, feature_names, sparsity_threshold=1e-5):
     np.savez(os.path.join(output_dir, 'beta.npz'), beta=beta)
     if bg is not None:
         np.savez(os.path.join(output_dir, 'bg.npz'), bg=bg)
-    fh.write_to_json(feature_names, os.path.join(output_dir, 'vocab.json'), sort_keys=False)
+    #fh.write_to_json(feature_names, os.path.join(output_dir, 'vocab.json'), sort_keys=False)
 
     topics_file = os.path.join(output_dir, 'topics.txt')
     lines = []
