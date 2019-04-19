@@ -219,7 +219,7 @@ def load_word_counts(input_dir, input_prefix, vocab=None):
     no_index = df.drop(df.columns[0], axis = 1)#drop the index
     X = no_index.values
     vocab = no_index.columns
-    ids = df['index'].values
+    ids = df['INDEX'].values
 #    print("Loading data")
 #    # laod the word counts and convert to a dense matrix
 #    temp = fh.load_sparse(os.path.join(input_dir, input_prefix + '.npz')).todense()
