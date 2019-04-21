@@ -394,7 +394,7 @@ def make_network(options, vocab_size, label_type=None, n_labels=0, n_prior_covar
     return network_architecture
 
 
-def train(model, network_architecture, X, Y, PC, TC, batch_size=200, training_epochs=100, display_step=10, X_dev=None, Y_dev=None, PC_dev=None, TC_dev=None, bn_anneal=True, init_eta_bn_prop=1.0, rng=None, min_weights_sq=1e-7):
+def train(model, network_architecture, X, Y, PC, TC, batch_size=200, training_epochs=100, display_step=1, X_dev=None, Y_dev=None, PC_dev=None, TC_dev=None, bn_anneal=True, init_eta_bn_prop=1.0, rng=None, min_weights_sq=1e-7):
     # Train the model
     n_train, vocab_size = X.shape
     mb_gen = create_minibatch(X, Y, PC, TC, batch_size=batch_size, rng=rng)
@@ -741,7 +741,7 @@ def predict_labels_and_evaluate(model, X, Y, PC, TC, output_dir=None, subset='tr
 
 def print_topic_label_associations(options, label_names, model, n_prior_covars, n_topic_covars):
     # Print associations between topics and labels
-    if options.n_labels > 0 and options.n_labels < 7:
+    if options.n_labels > 0 and options.n_labels < 14:
         print("Label probabilities based on topics")
         print("Labels:", ' '.join([name for name in label_names]))
     probs_list = []
